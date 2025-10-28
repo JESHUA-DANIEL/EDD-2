@@ -1,163 +1,160 @@
 package eva2_2_lista;
 public class Lista {
-    private Nodo inicio;
-    private Nodo fin;
-    public Lista() { //LISTA VACIA
-        inicio = null;
+    private Nodo inicio, fin;
+    public Lista(){
+        inicio = null;     
         fin = null;
-    }
-    //O(N)
-    public void agregar(int valor) {//Agregar un nodo
-        //1.Conocer el estado de la lista 
-        //2.Si hay nodos movernos al final
-        //VERIFICA SI LA LISTA ESTA VACIA
-        Nodo nuevo = new Nodo(valor);
-        if (inicio == null) {//LISTA VACIA
-            inicio = nuevo;
-            fin = nuevo;
-        } else {
-            /*Movernos al nodo final de la lista
-            Nodo temp = inicio;
-            while (temp.getSiguiente() != null) {
-                temp = temp.getSiguiente();
-            }
-            temp.setSiguiente(nuevo);*/
-            fin.setSiguiente(nuevo);
-            fin = nuevo;
-        }
-    }
-    //O(N)
-    public void imprimir() {
-        Nodo temp = inicio;
-        while (temp != null) {
-            System.out.print(" [ " + temp.getValor() + " ] ");
-            temp = temp.getSiguiente();
-        }
-    }
-    public int size() {
-        int tama = 0;
-        Nodo temp = inicio;
-        while (temp != null) {
-            tama += 1;
-            temp = temp.getSiguiente();
-        }
+    } 
+    public int size(){
+    int tama = 0; // Se inicializa en 0
+    /*Nodo temp = inicio;
+    while(temp != null){
+        tama +=1; 
+        temp = temp.getSiguiente();
+    }*/
         return tama;
     }
-    //O(1)
-    public void vaciarLista() {
+     public void agregar(int valor){ //agregar un nodo
+        Nodo nuevo = new Nodo(valor);
+        //1. Conocer el estado de la lista.
+        //2. Si hay nodos, omvernos al final.
+        //Verificar si la lista esta vacia:
+        if(inicio == null ){ //Lista Vacia
+            inicio = nuevo;
+            fin = nuevo;
+        }else{ //hay un millon de nodos.
+               //movernos al nodo final de la lista.
+            /*Nodo temp = inicio;
+            while(temp.getSiguiente() != null){
+                temp = temp.getSiguiente();
+            }
+            temp.setSiguiente(nuevo); //agregando el nodo al final*/
+            fin.setSiguiente(nuevo);
+            nuevo.setPrevio(fin);
+            fin = nuevo;
+        }
+    }    
+      public void imprimir(){
+        Nodo temp = inicio;
+        while(temp != null){
+            System.out.print("[" + temp.getValor() + "]");
+            temp = temp.getSiguiente();
+        }
+        System.out.println("");
+    }
+      public void imprimirInv(){
+          Nodo temp = fin;
+          while(temp!= null){
+              System.out.println("[" + temp.getValor() + "]");
+               temp = temp.getPrevio(); 
+          }
+      }
+      public void insertarEn(int valor, int posi){
+        //veritifcar el estado de la lista.
+        //verificar la posicion
+        //no podemos insertar nodos en una lista vacia
+        if (inicio == null) {
+        throw new RuntimeException("Lista vacía, no se pueden insertar nodos");
+    } else {
+        int tama = size(); 
+        if (posi >= 0 && posi <= tama) { 
+            Nodo nuevo = new Nodo(valor);
+            if (posi == 0) {
+                nuevo.setSiguiente(inicio);
+                inicio.setPrevio(nuevo);
+                inicio = nuevo;
+            } else {
+                // Mover temp al punto anterior
+                Nodo temp = inicio; 
+                for (int i = 0; i < posi -1; i++) {
+                    temp = temp.getSiguiente();
+                }
+                nuevo.setSiguiente(temp);
+                nuevo.setPrevio(temp.getPrevio());
+                temp.getPrevio().setSiguiente(nuevo);
+                temp.setPrevio(nuevo);
+            }
+        } else {  
+            throw new RuntimeException("Posición incorrecta, no se pueden insertar nodos");
+        }
+        }
+    }
+       public void vaciarLista(){
         inicio = null;
         fin = null;
     }
-    //O(N)
-public void insertarEn(int valor, int posi) {
-//VERIFICAR EL ESTADO DE LA LISTA
-//VERIFICAR LA POSICION
-// NO PODEMOS INSERTAR NODOS EN UNA LISTA VACIO
-if(inicio == null){
-    throw new RuntimeException("Lista vacia, no se pueden insertar nodos");
-}else {//VERIFICAR LA POSICION
-            //CUALES SON LAS POSICIONES INICIAL Y FINAL DE LA LISTA?
+       public boolean listaVacia(){
+        if(inicio == null)
+            return true;
+        else
+            return false;
+    }
+        public void borrarEn(int posi) {
+            if (inicio == null) {
+            throw new RuntimeException("Lista vacía, no hay nodos para borrar");
+    }
             int tama = size();
-            if(posi>=0 && posi < tama){
-                Nodo nuevo = new Nodo();
-                if(posi == 0){
-                    nuevo.setSiguiente(inicio);
-                    inicio = nuevo;
-                }else{
-                    Nodo temp = inicio;
-                int cont = 0;
-                while(cont < (posi-1)){
-                    temp = temp.getSiguiente();
-                    cont++;
+            if (posi >= 0 && posi < tama) {
+                if (posi == 0) {
+                    if (tama == 1) {
+                        vaciarLista();
+            } else {
+                inicio = inicio.getSiguiente();
+                if (inicio != null) {
+                    inicio.setPrevio(null); 
                 }
-                nuevo.setSiguiente(temp.getSiguiente());
-                temp.setSiguiente(nuevo);
-            }/*else
-                throw new RuntimeException("Posicion incorrecta, no se pueden insertar nodos");
-}*/
-}
-}
-}
-//O(1)
-public static boolean listaVacia(){
-    if(inicio == null){
-        return true;
-    }else{
-        return false;
+            }
+        } else {
+            Nodo temp = inicio;
+            for (int i = 0; i < posi - 1; i++) {
+                temp = temp.getSiguiente();
+            }
+            Nodo nodoABorrar = temp.getSiguiente(); 
+            temp.setSiguiente(nodoABorrar.getSiguiente());
+            
+            if (nodoABorrar.getSiguiente() != null) { 
+                nodoABorrar.getSiguiente().setPrevio(temp);
+            } 
+            if (posi == (tama - 1)) {
+                fin = temp;
+            }  
+        }
+    } else {
+        throw new RuntimeException("Posición incorrecta, no existe el nodo a borrar");
     }
 }
-//O(N)
-public void borrarEn(int posi){
-if(inicio == null){
-    throw new RuntimeException("Lista vacia, no se pueden borrar nodos");
-}else {//VERIFICAR LA POSICION
-            //CUALES SON LAS POSICIONES INICIAL Y FINAL DE LA LISTA?
-            int tama = size();
-            if(posi>=0 && posi < tama){
-                if(posi == 0){
-                  if(tama ==1){//un solo nodo en la lista
-                      vaciarLista();
-                  }else{
-                      inicio = inicio.getSiguiente();
-                  }
-                }else{
-                    Nodo temp = inicio;
-                int cont = 0;
-                while(cont < (posi-1)){
-                    temp = temp.getSiguiente();
-                    cont++;
-                }
-                Nodo aux = temp.getSiguiente();
-                temp.setSiguiente(aux.getSiguiente());
-                if(posi == (tama -1)){//verificar que borramos el ultimo nodo
-                    fin = temp;
-}
-            }
-            }
-}
-}
-public int buscar(int valor){//buscar el valor en la lista
-    Nodo temp = inicio;
-    int cont = 0;
-        while (temp !=null) {
-            temp = temp.getSiguiente();
-            if(temp.getValor() != valor){
-            cont++;
-            }   
+        public int buscar(int valor ){
+            int posicion = 0;
+            Nodo temp = inicio;
+    
+            while (temp != null) {
+            if (temp.getValor() == valor) {
+            return posicion; 
         }
-        return cont;
+        
+        temp = temp.getSiguiente();
+        posicion++;
+    }
+        return -1;
+}   
+        public int buscarEn(int posi) {
+    if (inicio == null) {
+        throw new RuntimeException("Lista vacía, no hay nodos para buscar");
+    }  
+    int tama = size();   
+    if (posi >= 0 && posi < tama) {       
+        if (posi == 0) {
+            return inicio.getValor();
+        }        
+        else {
+            Nodo temp = inicio;           
+            for (int i = 0; i < posi; i++) {
+                temp = temp.getSiguiente();
+            } 
+            return temp.getValor();
+        }       
+    } else {
+        throw new RuntimeException("Posición incorrecta, no existe el nodo en ese índice");
+    }
 }
-public int buscarEn(int posi){
-   if(inicio == null){
-    throw new RuntimeException("Lista vacia, no se pueden borrar nodos");
-}else {//VERIFICAR LA POSICION
-            //CUALES SON LAS POSICIONES INICIAL Y FINAL DE LA LISTA?
-            int tama = size();
-            if(posi>=0 && posi < tama){
-                if(posi == 0){
-                  if(tama ==1){//un solo nodo en la lista
-                      vaciarLista();
-                  }else{
-                      inicio = inicio.getSiguiente();
-                  }
-                }else{
-                    Nodo temp = inicio;
-                int cont = 0;
-                while(cont < posi){
-                    temp = temp.getSiguiente();
-                    cont++;
-                }
-                Nodo aux = temp.getSiguiente();
-                temp.setSiguiente(aux.getSiguiente());
-                if(posi == (tama -1)){//verificar que borramos el ultimo nodo
-                    fin = temp;
-} 
-}
-}
-}
-}
-}
-
-            
-
-
+    }
