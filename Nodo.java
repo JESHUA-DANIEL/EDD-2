@@ -1,15 +1,19 @@
 package eva2_2_lista;
 public class Nodo {
     private int valor;
-    private int fin;
-    private Nodo siguiente;
-    private Nodo nuevo;
-    public Nodo() {
-        siguiente = null;//FINAL DE LA LISTA
+   private Nodo siguiente;
+   private Nodo previo;
+    public Nodo(){
+        siguiente = null;
+        previo = null;
     }
-    public Nodo(int valor) { // FACILITAR PONER VALORES EN LA LISTA
+    public Nodo(int valor){
         this.valor = valor;
         this.siguiente = null;
+        this.previo = null;   
+    }
+    public Nodo(int valor, Nodo siguiente) {
+        this.siguiente = siguiente;
     }
     public int getValor() {
         return valor;
@@ -23,4 +27,10 @@ public class Nodo {
     public void setSiguiente(Nodo siguiente) {
         this.siguiente = siguiente;
     }
+    public Nodo getPrevio() {
+        return previo;
+    }
+    public void setPrevio(Nodo previo) {
+        this.previo = previo;
+    }  
 }
