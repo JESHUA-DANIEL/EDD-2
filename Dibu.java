@@ -1,11 +1,35 @@
+
 import java.awt.Graphics;
 import java.awt.Point;
+import java.io.*;
+
 public class Dibu extends javax.swing.JFrame {
-    Point prev;
+    private Lista<Point> puntosDibujo = new Lista<>();
+    private LienzoDibujo canvas1;
+    
+    Point prev = null;
+    
+
     public Dibu() {
-        initComponents();
+       initComponents(); // inicializa los botones y layout
         prev = null;
+
+        // 🔹 Crear e insertar el lienzo en la ventana
+        canvas1 = new LienzoDibujo(puntosDibujo);
+        getContentPane().add(canvas1); // lo añadimos al JFrame
+
+        // 🔹 Usar coordenadas fijas para ubicarlo
+        getContentPane().setLayout(null);
+        canvas1.setBounds(30, 30, 600, 350);
+
+        // 🔹 Reubicar botones si quedan fuera de vista
+        btnGuardar.setBounds(100, 400, 130, 30);
+        btnCargar.setBounds(300, 400, 130, 30);
+
+        setSize(700, 500);
     }
+    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -15,13 +39,22 @@ public class Dibu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        canvas1 = new java.awt.Canvas();
+        btnGuardar = new javax.swing.JButton();
+        btnCargar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        canvas1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                canvas1MouseClicked(evt);
+        btnGuardar.setText("Guardar Dibujo");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+
+        btnCargar.setText("Cargar Dibujo");
+        btnCargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCargarActionPerformed(evt);
             }
         });
 
@@ -29,29 +62,64 @@ public class Dibu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(canvas1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(57, 57, 57)
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(106, 106, 106)
+                .addComponent(btnCargar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(223, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(canvas1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(410, 410, 410)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGuardar)
+                    .addComponent(btnCargar))
+                .addGap(0, 27, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void canvas1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvas1MouseClicked
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        Point coor = evt.getPoint();      
-        Graphics graphics = canvas1.getGraphics();
-        graphics.drawOval(coor.x - 2, coor.y - 2, 4, 4);
+        String archivo = "dibujo.dat"; 
+    
+    try (
+        // Abrir flujos para escribir el objeto
+        FileOutputStream fos = new FileOutputStream(archivo);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+    ) {
+        // Escribir la lista completa (incluyendo todos los Nodos y Points)
+        oos.writeObject(puntosDibujo); 
+        System.out.println("Dibujo guardado exitosamente en " + archivo);
         
-        if (prev == null)
-            prev = coor;
-        else{
-            graphics.drawLine(prev.x, prev.y, coor.x, coor.y);
-            prev = coor;
-        }
-    }//GEN-LAST:event_canvas1MouseClicked
+    } catch (IOException e) {
+        System.err.println("Error al guardar el archivo: " + e.getMessage());
+        e.printStackTrace();
+    }
+        
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActionPerformed
+        // TODO add your handling code here:
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("dibujo.dat"))) {
+        // Carga la lista de puntos guardada
+        Lista<Point> puntosCargados = (Lista<Point>) ois.readObject();
+
+        // Asigna los nuevos puntos al lienzo que ya está visible
+        canvas1.setPuntos(puntosCargados);
+
+        // Redibuja el lienzo
+        canvas1.repaint();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+       
+    }
+
+    }//GEN-LAST:event_btnCargarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -89,6 +157,7 @@ public class Dibu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.awt.Canvas canvas1;
+    private javax.swing.JButton btnCargar;
+    private javax.swing.JButton btnGuardar;
     // End of variables declaration//GEN-END:variables
 }
