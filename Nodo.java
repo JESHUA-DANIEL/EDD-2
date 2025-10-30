@@ -1,36 +1,29 @@
-package eva2_2_lista;
-public class Nodo {
-    private int valor;
-   private Nodo siguiente;
-   private Nodo previo;
-    public Nodo(){
-        siguiente = null;
-        previo = null;
-    }
-    public Nodo(int valor){
+package eva2_3_double_linked_list_tipos_genericos;
+public class Nodo<T> {
+     private T valor;
+    private Nodo<T> siguiente;
+    private Nodo<T> previo;
+    public Nodo(T valor) {
         this.valor = valor;
         this.siguiente = null;
-        this.previo = null;   
+        this.previo = null;
     }
-    public Nodo(int valor, Nodo siguiente) {
-        this.siguiente = siguiente;
-    }
-    public int getValor() {
+    public T getValor() {
         return valor;
     }
-    public void setValor(int valor) {
+    public void setValor(T valor) {
         this.valor = valor;
     }
-    public Nodo getSiguiente() {
+    public Nodo<T> getSiguiente() {
         return siguiente;
     }
-    public void setSiguiente(Nodo siguiente) {
+    public void setSiguiente(Nodo<T> siguiente) {
         this.siguiente = siguiente;
     }
-    public Nodo getPrevio() {
+    public Nodo<T> getPrevio() {
         return previo;
     }
-    public void setPrevio(Nodo previo) {
+    public void setPrevio(Nodo<T> previo) {
         this.previo = previo;
-    }  
+    }
 }
